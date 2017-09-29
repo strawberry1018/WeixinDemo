@@ -1,0 +1,18 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-widthminimum-scale=1.0,maximum-scale=1.0,user-scalable=no
+" />
+    <title>@ViewBag.Title</title>
+    <link type="text/css" rel="stylesheet" href="http://res.wx.qq.com/open/libs/weui/1.1.2/weui.min.css"/>
+    <script src="~/Scripts/jquery-3.2.1.min.js"></script>
+</head>
+<body>
+<div>
+    @RenderBody()
+</div>
+@Html.Action("JsSdkConfig", "OAuth")
+    @RenderSection("WxScript",false)
+</body>
+</html>

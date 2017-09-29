@@ -1,0 +1,77 @@
+﻿@model Senparc.Weixin.MP.AdvancedAPIs.OAuth.OAuthUserInfo
+@{
+    ViewBag.Title="首页";
+    Layout = "../_Layout.cshtml";
+}
+
+    @Model.nickname
+    <br/>
+    @Model.openid
+    <br />
+    @Model.city
+    <br />
+    @Model.country
+    <br />
+    <img class="show-photo" src="@Model.headimgurl" height="100px" width="100px"/>
+<div>
+    <a href="javascript:;" class="open-photo weui-btn weui-btn_primary">选择一张图片</a>
+
+    <a href="javascript:;" class="show-map weui-btn weui-btn_primary">显示当前位置</a>
+</div>
+@section WxScript
+{
+    <script>
+        wx.ready(function () {
+            //分享到朋友圈
+            wx.onMenuShareTimeline({
+                title: '分享朋友圈测试', // 分享标题
+                link: 'http://wx.creazy.shop@(Url.Action("Share"))', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                imgUrl: 'http://img4.imgtn.bdimg.com/it/u=2545794228,624723658&fm=27&gp=0.jpg', // 分享图标
+                success: function () {
+                    alert("用户分享完成");
+                },
+                cancel: function () {
+                    alert("用户取消分享");
+                }
+            });
+        });
+        var localIds = [];
+        $(".open-photo").click(function() {
+            wx.chooseImage({
+                count: 9, // 默认9
+                sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+                sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+                success: function (res) {
+                    $(".show-photo").attr("src", res.localIds[0]);
+                    localIds = res.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
+                }
+            });
+        });
+
+        $(".show-photo").click(function () {
+            var that = $(this);
+            wx.previewImage({
+                current:that.attr("src"), // 当前显示图片的http链接
+                urls: localIds // 需要预览的图片http链接列表
+            });
+        });
+
+        $(".show-map").click(function() {
+            wx.getLocation({
+                type: 'gcj02', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
+                success: function (res) {
+                    //var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
+                    //var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
+                    wx.openLocation({
+                        latitude: res.latitude, // 纬度，浮点数，范围为90 ~ -90
+                        longitude: res.longitude, // 经度，浮点数，范围为180 ~ -180。
+                        name: '召唤师峡谷', // 位置名
+                        address: '河道草丛', // 地址详情说明
+                        scale: 28, // 地图缩放级别,整形值,范围从1~28。默认为最大
+                        infoUrl: 'http://wx.creazy.shop@(Url.Action("Share"))' // 在查看位置界面底部显示的超链接,可点击跳转
+                    });
+                }
+            });
+        });
+    </script>
+}
